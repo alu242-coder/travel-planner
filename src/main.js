@@ -55,6 +55,7 @@ const buildTripFromImport = (data) => ({
     dayIndex: Number.isFinite(Number(it.dayIndex)) ? Number(it.dayIndex) : 0,
     time: it.time || '',
     text: it.text || '',
+    place: (it.place || '').trim(),
   })),
   packing: (data.packing || []).map((p) => ({
     id: uid(),
@@ -315,16 +316,18 @@ const bindMain = () => {
     btn.addEventListener('click', () => {
       const dayIndex = Number(btn.dataset.addItinerary);
       t.itinerary = t.itinerary || [];
-      t.itinerary.push({ id: uid(), dayIndex, time: '', text: '' });
+      t.itinerary.push({ id: uid(), dayIndex, time: '', text: '', place: '' });
       persist(); render();
     });
   });
-  $$('[data-itinerary-time], [data-itinerary-text]').forEach((el) => {
+  $$('[data-itinerary-time], [data-itinerary-text], [data-itinerary-place]').forEach((el) => {
     el.addEventListener('change', () => {
-      const id = el.dataset.itineraryTime ? el.dataset.itineraryTime : el.dataset.itineraryText;
-      const field = el.dataset.itineraryTime ? 'time' : 'text';
+      let id, field;
+      if (el.dataset.itineraryTime) { id = el.dataset.itineraryTime; field = 'time'; }
+      else if (el.dataset.itineraryText) { id = el.dataset.itineraryText; field = 'text'; }
+      else if (el.dataset.itineraryPlace) { id = el.dataset.itineraryPlace; field = 'place'; }
       const item = (t.itinerary || []).find((x) => x.id === id);
-      if (item) { item[field] = el.value; persist(); }
+      if (item) { item[field] = el.value; persist(); if (field === 'place') render(); }
     });
   });
   $$('[data-del-itinerary]').forEach((btn) => {

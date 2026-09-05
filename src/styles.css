@@ -330,6 +330,20 @@ html, body {
   border-top: 1px dashed var(--border);
 }
 .itinerary-item:first-child { border-top: 0; }
+.itinerary-time { font-variant-numeric: tabular-nums; }
+.itinerary-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.itinerary-place {
+  font-size: 12px;
+  padding: 5px 9px;
+  color: var(--text-2);
+}
+.itinerary-place::placeholder { color: var(--text-3); }
+.maps-link {
+  text-decoration: none;
+  font-size: 14px;
+  color: #1a73e8;
+}
+.maps-link:hover { background: rgba(26, 115, 232, 0.08); color: #1557b0; }
 
 .budget-summary {
   display: flex;

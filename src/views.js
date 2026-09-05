@@ -60,13 +60,25 @@ export const viewItinerary = (trip, onUpdate) => {
         </div>
         ${items.length === 0
           ? '<p class="muted" style="margin:4px 0 0;font-size:13px">這天還沒排。</p>'
-          : `<div class="list">${items.map((it) => `
+          : `<div class="list">${items.map((it) => {
+            const place = (it.place || '').trim();
+            const mapsUrl = place
+              ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}`
+              : '';
+            return `
               <div class="itinerary-item" data-itinerary-id="${escape(it.id)}">
-                <input class="input" data-itinerary-time="${escape(it.id)}" value="${escape(it.time || '')}" placeholder="09:00" />
-                <input class="input" data-itinerary-text="${escape(it.id)}" value="${escape(it.text || '')}" placeholder="景點 / 餐廳 / 備註…" />
-                <div class="actions"><button class="btn btn-icon btn-ghost btn-danger" data-del-itinerary="${escape(it.id)}" title="刪除">✕</button></div>
+                <input class="input itinerary-time" data-itinerary-time="${escape(it.id)}" value="${escape(it.time || '')}" placeholder="09:00" />
+                <div class="itinerary-main">
+                  <input class="input" data-itinerary-text="${escape(it.id)}" value="${escape(it.text || '')}" placeholder="景點 / 餐廳 / 備註…" />
+                  <input class="input itinerary-place" data-itinerary-place="${escape(it.id)}" value="${escape(place)}" placeholder="📍 Google Maps 地點（選填）" />
+                </div>
+                <div class="actions">
+                  ${mapsUrl ? `<a class="btn btn-icon btn-ghost maps-link" href="${escape(mapsUrl)}" target="_blank" rel="noopener noreferrer" title="在 Google Maps 開：${escape(place)}">📍</a>` : ''}
+                  <button class="btn btn-icon btn-ghost btn-danger" data-del-itinerary="${escape(it.id)}" title="刪除">✕</button>
+                </div>
               </div>
-            `).join('')}</div>`
+            `;
+          }).join('')}</div>`
         }
       </div>
     `);
