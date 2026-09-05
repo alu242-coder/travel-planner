@@ -1,5 +1,8 @@
+import pkg from '../package.json';
 import { loadTrips, saveTrips, uid, todayISO } from './storage.js';
 import { viewOverview, viewItinerary, viewPacking, viewBudget, viewNotes, tabLabels } from './views.js';
+
+const APP_VERSION = pkg.version;
 
 const escape = (s) => String(s ?? '')
   .replace(/&/g, '&amp;')
@@ -114,6 +117,7 @@ const render = () => {
           <button class="btn btn-ghost" id="import-trip" title="貼 JSON 匯入">匯入</button>
           <button class="btn btn-ghost" id="export-all" title="匯出 JSON">匯出</button>
         </div>
+        <span class="app-version" title="版本">v${APP_VERSION}</span>
       </div>
     </aside>
     <main class="main" id="main"></main>
@@ -152,6 +156,7 @@ const renderMain = () => {
       <div class="main-empty">
         <h2 style="margin:0 0 8px">選一個行程</h2>
         <p style="margin:0;font-size:14px">從左邊挑，或建一個新的。</p>
+        <p class="app-version" style="margin-top:14px;font-size:12px;color:var(--text-3)">v${APP_VERSION}</p>
       </div>`;
     return;
   }
@@ -406,10 +411,28 @@ const bindMain = () => {
   });
 };
 
-const init = () => {
+const SEED_DONE_KEY = 'travel-planner:seeded:v1';
+
+const seedDemoTrip = async () => {
+  if (localStorage.getItem(SEED_DONE_KEY)) return;
+  try {
+    const res = await fetch('./nagoya.json');
+    if (!res.ok) return;
+    const data = await res.json();
+    importTrip(data);
+    localStorage.setItem(SEED_DONE_KEY, '1');
+  } catch (err) {
+    console.warn('Seed fetch failed', err);
+  }
+};
+
+const init = async () => {
   state.trips = loadTrips();
-  if (!tryHashImport() && state.trips.length > 0) {
+  tryHashImport();
+  await seedDemoTrip();
+  if (state.trips.length > 0 && !state.activeId) {
     state.activeId = state.trips[0].id;
+    state.tab = 'overview';
   }
   render();
 };
