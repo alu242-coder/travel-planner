@@ -40,7 +40,7 @@ html, body {
   padding: 0;
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", Roboto, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.5;
   background: var(--bg);
   color: var(--text);
@@ -48,7 +48,7 @@ html, body {
 }
 
 #app {
-  height: 100%;
+  height: 100dvh;
   display: grid;
   grid-template-columns: 280px 1fr;
 }
@@ -57,6 +57,93 @@ html, body {
   #app {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
+  }
+  html, body { font-size: 17px; }
+
+  /* Sidebar: compact top strip with horizontal trip picker */
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    max-height: 168px;
+  }
+  .sidebar-header {
+    padding: 12px 14px 6px;
+    gap: 8px;
+  }
+  .brand { font-size: 16px; }
+  .trip-list {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding: 4px 14px 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 0 0 auto;
+  }
+  .trip-item {
+    flex: 0 0 auto;
+    min-width: 200px;
+    margin-bottom: 0;
+    padding: 12px 14px;
+  }
+  .trip-name { font-size: 15px; }
+  .trip-meta { font-size: 13px; }
+  .sidebar-footer { font-size: 13px; padding: 10px 14px; }
+
+  /* Main: comfortable mobile padding */
+  .main {
+    padding: 16px 14px 80px;
+  }
+  .trip-subtitle { font-size: 15px; margin-bottom: 14px; }
+
+  /* Bigger touch targets */
+  .btn {
+    padding: 10px 16px;
+    font-size: 15px;
+    min-height: 44px;
+  }
+  .btn-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+
+  /* Inputs: 16px+ (prevents iOS zoom on focus) */
+  .input, .textarea, .select {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+  .itinerary-time { font-size: 16px; }
+  .itinerary-place { font-size: 14px; padding: 10px 14px; }
+
+  /* Tabs: scrollable, bigger */
+  .tabs { gap: 2px; }
+  .tab {
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+
+  /* Cards / list items: tighter mobile */
+  .card { padding: 16px 14px; }
+  .card h3 { font-size: 16px; }
+  .list-item { padding: 14px; gap: 12px; }
+  .day-block { padding: 12px 14px; }
+  .day-title { font-size: 16px; }
+
+  /* Itinerary item: stack vertically for mobile */
+  .itinerary-item {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "time actions" "main main";
+    gap: 8px;
+  }
+  .itinerary-item > .itinerary-time { grid-area: time; }
+  .itinerary-item > .itinerary-main { grid-area: main; }
+  .itinerary-item > .actions { grid-area: actions; align-self: center; }
+
+  /* Map: 60vh, responsive */
+  .trip-map {
+    height: 60vh;
+    min-height: 320px;
   }
 }
 
@@ -95,10 +182,10 @@ html, body {
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
-  padding: 7px 12px;
+  padding: 8px 14px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   transition: background .12s, border-color .12s;
 }
@@ -111,11 +198,12 @@ html, body {
 }
 .btn-primary:hover { background: #0d9488; border-color: #0d9488; }
 .btn-icon {
-  width: 30px; height: 30px;
+  width: 36px; height: 36px;
   padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-size: 15px;
 }
 .btn-ghost { border-color: transparent; }
 .btn-danger { color: var(--danger); }
@@ -256,12 +344,12 @@ html, body {
 
 .input, .textarea, .select {
   width: 100%;
-  padding: 9px 11px;
+  padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--text);
-  font-size: 14px;
+  font-size: 15px;
   font-family: inherit;
 }
 .input:focus, .textarea:focus, .select:focus {
@@ -427,10 +515,10 @@ dialog::backdrop { background: rgba(0,0,0,.4); backdrop-filter: blur(2px); }
 .leaflet-popup-content a { color: #1a73e8; }
 
 .app-version {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 .app-version:hover { opacity: 1; }
