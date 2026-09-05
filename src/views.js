@@ -61,7 +61,7 @@ export const viewItinerary = (trip, onUpdate) => {
         ${items.length === 0
           ? '<p class="muted" style="margin:4px 0 0;font-size:13px">這天還沒排。</p>'
           : `<div class="list">${items.map((it) => {
-            const place = (it.place || '').trim();
+            const place = ((it.place || '').trim() || matchKnownPlace(it.text || '')).trim();
             const mapsUrl = place
               ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}`
               : '';
@@ -196,6 +196,15 @@ export const tabLabels = [
   { id: 'notes', label: '筆記' },
 ];
 
+// Auto-detect a place name from free-text itinerary items.
+const matchKnownPlace = (text) => {
+  if (!text) return '';
+  for (const known of Object.keys(KNOWN_PLACES)) {
+    if (text.includes(known)) return known;
+  }
+  return '';
+};
+
 // Known coordinates for popular Japanese locations. Anything not here falls back to the list only.
 export const KNOWN_PLACES = {
   '中部國際機場': [34.8584, 136.8133],
@@ -216,7 +225,11 @@ export const KNOWN_PLACES = {
 
 export const viewMap = (trip) => {
   const items = (trip.itinerary || [])
-    .filter((it) => it.place && it.place.trim())
+    .map((it) => {
+      const place = ((it.place || '').trim() || matchKnownPlace(it.text || '')).trim();
+      return { ...it, place };
+    })
+    .filter((it) => it.place)
     .sort((a, b) => (a.dayIndex - b.dayIndex) || (a.time || '').localeCompare(b.time || ''));
   if (items.length === 0) {
     return `<section class="section">

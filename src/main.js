@@ -152,7 +152,6 @@ const render = () => {
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="brand"><span class="brand-dot"></span>旅遊規劃</div>
-        <button class="btn btn-primary" id="new-trip">＋ 新行程</button>
       </div>
       <div class="trip-list" id="trip-list"></div>
       <div class="sidebar-footer">
@@ -179,7 +178,7 @@ const renderTripList = () => {
   const list = $('#trip-list');
   if (!list) return;
   if (state.trips.length === 0) {
-    list.innerHTML = `<div class="empty-state">還沒有行程<br/>點上面的「＋ 新行程」開始</div>`;
+    list.innerHTML = `<div class="empty-state">沒有行程</div>`;
     return;
   }
   list.innerHTML = state.trips.map((t) => `
@@ -187,7 +186,6 @@ const renderTripList = () => {
       <div class="trip-name">${escape(t.name || '未命名')}</div>
       <div class="trip-meta">${escape(t.destination || '—')} · ${escape(t.start || '?')} → ${escape(t.end || '?')}</div>
       <div class="trip-actions">
-        <button class="btn btn-ghost btn-icon" data-rename="${escape(t.id)}" title="改名">✎</button>
         <button class="btn btn-ghost btn-icon btn-danger" data-delete="${escape(t.id)}" title="刪除">✕</button>
       </div>
     </div>
@@ -222,7 +220,6 @@ const renderMain = () => {
         <h1 class="trip-title">${escape(t.name || '未命名')}</h1>
         <p class="trip-subtitle">${escape(t.destination || '')} · ${escape(t.start || '')} → ${escape(t.end || '')}</p>
       </div>
-      <button class="btn" id="rename-active">改名 / 設目的地</button>
     </div>
     <nav class="tabs" id="tabs">
       ${tabLabels.map((tab) => `
