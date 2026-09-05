@@ -416,15 +416,15 @@ dialog::backdrop { background: rgba(0,0,0,.4); backdrop-filter: blur(2px); }
 .muted { color: var(--text-3); }
 .danger { color: var(--danger); }
 
-.trip-map-iframe {
+.trip-map {
   width: 100%;
   height: 480px;
-  border: 0;
   border-radius: var(--radius-sm);
-  display: block;
   background: var(--surface-2);
+  z-index: 0;
 }
 .map-card { padding-bottom: 8px; }
+.leaflet-popup-content a { color: #1a73e8; }
 
 .app-version {
   font-size: 11px;

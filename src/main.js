@@ -103,6 +103,36 @@ const tryHashImport = () => {
   }
 };
 
+const initTripMap = () => {
+  if (typeof L === 'undefined') return;
+  const container = document.getElementById('trip-map');
+  if (!container || container._leaflet_id) return;
+  let markers;
+  try { markers = JSON.parse(container.dataset.markers || '[]'); }
+  catch (e) { markers = []; }
+  const mapped = markers.filter((m) => Array.isArray(m.coords));
+  const map = L.map(container, { scrollWheelZoom: false }).setView([35.17, 136.91], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19,
+  }).addTo(map);
+  if (mapped.length === 0) return;
+  const bounds = [];
+  mapped.forEach((m) => {
+    const marker = L.marker(m.coords).addTo(map);
+    const popup = `
+      <div style="font-family:system-ui,sans-serif;font-size:13px;line-height:1.5">
+        <strong>#${m.idx} ${escape(m.text || m.place)}</strong><br/>
+        <span style="color:#666">Day ${m.day} · ${escape(m.time || '')}</span><br/>
+        <a href="${escape(m.mapsUrl)}" target="_blank" rel="noopener noreferrer">在 Google Maps 開 →</a>
+      </div>`;
+    marker.bindPopup(popup);
+    bounds.push(m.coords);
+  });
+  if (bounds.length >= 2) map.fitBounds(bounds, { padding: [40, 40] });
+  else if (bounds.length === 1) map.setView(bounds[0], 14);
+};
+
 const render = () => {
   const root = $('#app');
   root.innerHTML = `
@@ -127,6 +157,9 @@ const render = () => {
   renderTripList();
   renderMain();
   bindGlobal();
+  if (state.tab === 'map') {
+    setTimeout(initTripMap, 0);
+  }
 };
 
 const renderTripList = () => {
