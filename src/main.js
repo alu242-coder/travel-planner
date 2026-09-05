@@ -1,6 +1,14 @@
 import pkg from '../package.json';
 import { loadTrips, saveTrips, uid, todayISO } from './storage.js';
-import { viewOverview, viewItinerary, viewPacking, viewBudget, viewNotes, viewMap, tabLabels } from './views.js';
+import { viewOverview, viewItinerary, viewPacking, viewBudget, viewNotes, viewMap, tabLabels, KNOWN_PLACES } from './views.js';
+
+const autoDetectPlace = (text) => {
+  if (!text) return '';
+  for (const known of Object.keys(KNOWN_PLACES)) {
+    if (text.includes(known)) return known;
+  }
+  return '';
+};
 
 const APP_VERSION = pkg.version;
 
@@ -50,13 +58,18 @@ const buildTripFromImport = (data) => ({
   notes: data.notes || '',
   freeNotes: data.freeNotes || '',
   budgetTotal: data.budgetTotal ?? '',
-  itinerary: (data.itinerary || []).map((it) => ({
-    id: uid(),
-    dayIndex: Number.isFinite(Number(it.dayIndex)) ? Number(it.dayIndex) : 0,
-    time: it.time || '',
-    text: it.text || '',
-    place: (it.place || '').trim(),
-  })),
+  itinerary: (data.itinerary || []).map((it) => {
+    const text = it.text || '';
+    const explicitPlace = (it.place || '').trim();
+    const place = explicitPlace || autoDetectPlace(text);
+    return {
+      id: uid(),
+      dayIndex: Number.isFinite(Number(it.dayIndex)) ? Number(it.dayIndex) : 0,
+      time: it.time || '',
+      text,
+      place,
+    };
+  }),
   packing: (data.packing || []).map((p) => ({
     id: uid(),
     text: p.text || '',
@@ -222,31 +235,6 @@ const renderMain = () => {
 };
 
 const bindGlobal = () => {
-  $('#new-trip')?.addEventListener('click', () => {
-    const id = uid();
-    const today = todayISO();
-    const trip = {
-      id,
-      name: '新行程',
-      destination: '',
-      start: today,
-      end: today,
-      notes: '',
-      freeNotes: '',
-      budgetTotal: '',
-      itinerary: [],
-      packing: [],
-      budget: [],
-      createdAt: new Date().toISOString(),
-    };
-    state.trips.unshift(trip);
-    state.activeId = id;
-    state.tab = 'overview';
-    persist();
-    render();
-    toast('已建新行程');
-  });
-
   $('#export-all')?.addEventListener('click', () => {
     const blob = new Blob([JSON.stringify(state.trips, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -294,21 +282,6 @@ const bindGlobal = () => {
       toast('已刪除');
     });
   });
-
-  $$('[data-rename]').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const id = btn.dataset.rename;
-      const t = findTrip(id);
-      if (!t) return;
-      const next = prompt('行程名稱', t.name || '');
-      if (next != null) {
-        t.name = next.trim() || t.name;
-        persist();
-        render();
-      }
-    });
-  });
 };
 
 const bindMain = () => {
@@ -320,11 +293,6 @@ const bindMain = () => {
       state.tab = tab.dataset.tab;
       render();
     });
-  });
-
-  $('#rename-active')?.addEventListener('click', () => {
-    const name = prompt('行程名稱', t.name || '');
-    if (name != null) { t.name = name.trim() || t.name; persist(); render(); }
   });
 
   // Overview edits
@@ -350,7 +318,8 @@ const bindMain = () => {
     btn.addEventListener('click', () => {
       const dayIndex = Number(btn.dataset.addItinerary);
       t.itinerary = t.itinerary || [];
-      t.itinerary.push({ id: uid(), dayIndex, time: '', text: '', place: '' });
+      const text = '';
+      t.itinerary.push({ id: uid(), dayIndex, time: '', text, place: autoDetectPlace(text) });
       persist(); render();
     });
   });
