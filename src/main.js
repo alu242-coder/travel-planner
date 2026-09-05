@@ -156,10 +156,6 @@ const render = () => {
       <div class="trip-list" id="trip-list"></div>
       <div class="sidebar-footer">
         <span>${state.trips.length} 個行程</span>
-        <div>
-          <button class="btn btn-ghost" id="import-trip" title="貼 JSON 匯入">匯入</button>
-          <button class="btn btn-ghost" id="export-all" title="匯出 JSON">匯出</button>
-        </div>
         <span class="app-version" title="版本">v${APP_VERSION}</span>
       </div>
     </aside>
@@ -185,9 +181,7 @@ const renderTripList = () => {
     <div class="trip-item ${t.id === state.activeId ? 'active' : ''}" data-trip-id="${escape(t.id)}">
       <div class="trip-name">${escape(t.name || '未命名')}</div>
       <div class="trip-meta">${escape(t.destination || '—')} · ${escape(t.start || '?')} → ${escape(t.end || '?')}</div>
-      <div class="trip-actions">
-        <button class="btn btn-ghost btn-icon btn-danger" data-delete="${escape(t.id)}" title="刪除">✕</button>
-      </div>
+      <div class="trip-actions"></div>
     </div>
   `).join('');
 };

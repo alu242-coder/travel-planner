@@ -15,10 +15,6 @@ export const viewOverview = (trip, onUpdate) => {
         <h3>基本資料</h3>
         <div class="row">
           <div class="field" style="flex:1">
-            <label>行程名稱</label>
-            <input class="input" data-edit="name" value="${escape(trip.name)}" placeholder="例：東京賞櫻 2026" />
-          </div>
-          <div class="field" style="flex:1">
             <label>目的地</label>
             <input class="input" data-edit="destination" value="${escape(trip.destination)}" placeholder="例：日本東京" />
           </div>
