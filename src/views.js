@@ -190,7 +190,54 @@ export const viewNotes = (trip, onUpdate) => {
 export const tabLabels = [
   { id: 'overview', label: '總覽' },
   { id: 'itinerary', label: '行程' },
+  { id: 'map', label: '地圖' },
   { id: 'packing', label: '打包' },
   { id: 'budget', label: '預算' },
   { id: 'notes', label: '筆記' },
 ];
+
+export const viewMap = (trip) => {
+  const items = (trip.itinerary || [])
+    .filter((it) => it.place && it.place.trim())
+    .sort((a, b) => (a.dayIndex - b.dayIndex) || (a.time || '').localeCompare(b.time || ''));
+  if (items.length === 0) {
+    return `<section class="section">
+      <div class="card"><p class="muted">這趟行程還沒設定地點。在「行程」分頁為每個項目填 place，這裡才會顯示地圖。</p></div>
+    </section>`;
+  }
+  const origin = items[0].place;
+  const destination = items[items.length - 1].place;
+  const waypoints = items.slice(1, -1).map((it) => it.place);
+  const params = new URLSearchParams();
+  params.set('api', '1');
+  params.set('origin', origin);
+  params.set('destination', destination);
+  if (waypoints.length) params.set('waypoints', waypoints.join('|'));
+  params.set('travelmode', 'driving');
+  const directionsUrl = `https://www.google.com/maps/dir/?${params.toString()}`;
+  return `<section class="section">
+    <div class="card map-card">
+      <h3>地圖總覽 <span class="muted" style="font-weight:400;font-size:13px">${items.length} 個地點</span></h3>
+      <iframe class="trip-map-iframe" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+              src="${escape(directionsUrl)}"
+              title="行程地圖（Google Maps directions）"></iframe>
+      <p class="muted" style="font-size:12px;margin:8px 0 0">
+        💡 看不到地圖的話：<a href="${escape(directionsUrl)}" target="_blank" rel="noopener noreferrer">在新分頁開 Google Maps →</a>
+      </p>
+    </div>
+    <div class="card">
+      <h3>所有地點（${items.length}）</h3>
+      <div class="list">
+        ${items.map((it, idx) => `
+          <div class="list-item">
+            <div class="grow">
+              <div><strong>${idx + 1}. ${escape(it.text || it.place)}</strong></div>
+              <div class="muted" style="font-size:12px">Day ${it.dayIndex + 1} · ${escape(it.time || '')}</div>
+            </div>
+            <a class="btn btn-icon btn-ghost maps-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.place)}" target="_blank" rel="noopener noreferrer" title="在 Google Maps 開">📍</a>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  </section>`;
+};

@@ -1,6 +1,6 @@
 import pkg from '../package.json';
 import { loadTrips, saveTrips, uid, todayISO } from './storage.js';
-import { viewOverview, viewItinerary, viewPacking, viewBudget, viewNotes, tabLabels } from './views.js';
+import { viewOverview, viewItinerary, viewPacking, viewBudget, viewNotes, viewMap, tabLabels } from './views.js';
 
 const APP_VERSION = pkg.version;
 
@@ -164,6 +164,7 @@ const renderMain = () => {
   const tabContent = {
     overview: viewOverview(t),
     itinerary: viewItinerary(t),
+    map: viewMap(t),
     packing: viewPacking(t),
     budget: viewBudget(t),
     notes: viewNotes(t),
