@@ -211,7 +211,6 @@ const renderMain = () => {
   main.innerHTML = `
     <div class="trip-header">
       <div>
-        <h1 class="trip-title">${escape(t.name || '未命名')}</h1>
         <p class="trip-subtitle">${escape(t.destination || '')} · ${escape(t.start || '')} → ${escape(t.end || '')}</p>
       </div>
     </div>
