@@ -155,7 +155,6 @@ const render = () => {
       </div>
       <div class="trip-list" id="trip-list"></div>
       <div class="sidebar-footer">
-        <span>${state.trips.length} 個行程</span>
         <span class="app-version" title="版本">v${APP_VERSION}</span>
       </div>
     </aside>
