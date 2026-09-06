@@ -151,12 +151,10 @@ const render = () => {
   root.innerHTML = `
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="brand"><span class="brand-dot"></span>旅遊規劃</div>
-      </div>
-      <div class="trip-list" id="trip-list"></div>
-      <div class="sidebar-footer">
         <span class="app-version" title="版本">v${APP_VERSION}</span>
       </div>
+      <div class="trip-list" id="trip-list"></div>
+      <div class="sidebar-footer"></div>
     </aside>
     <main class="main" id="main"></main>
   `;
