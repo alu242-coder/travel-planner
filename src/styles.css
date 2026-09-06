@@ -89,7 +89,6 @@ html, body {
   }
   .trip-name { font-size: 16px; }
   .trip-meta { font-size: 14px; }
-  .sidebar-footer { font-size: 13px; padding: 12px 16px; }
   .app-version { font-size: 13px; }
 
   /* Main: comfortable mobile padding */
@@ -247,16 +246,6 @@ html, body {
   text-align: center;
   color: var(--text-3);
   font-size: 13px;
-}
-
-.sidebar-footer {
-  padding: 10px 18px;
-  border-top: 1px solid var(--border);
-  font-size: 11px;
-  color: var(--text-3);
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
 }
 
 /* Main */

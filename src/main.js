@@ -154,7 +154,6 @@ const render = () => {
         <span class="app-version" title="版本">v${APP_VERSION}</span>
       </div>
       <div class="trip-list" id="trip-list"></div>
-      <div class="sidebar-footer"></div>
     </aside>
     <main class="main" id="main"></main>
   `;
