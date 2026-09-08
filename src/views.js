@@ -219,6 +219,12 @@ export const KNOWN_PLACES = {
   '驛麵通（えびそば 一幻）': [35.1709, 136.8814],
 };
 
+// Color palette for marking different days on the map. Cycles if more days than colors.
+export const DAY_COLORS = [
+  '#0f766e', '#0891b2', '#7c3aed', '#db2777', '#ea580c',
+  '#65a30d', '#ca8a04', '#475569', '#be123c', '#0369a1',
+];
+
 export const viewMap = (trip) => {
   const items = (trip.itinerary || [])
     .map((it) => {
@@ -239,18 +245,45 @@ export const viewMap = (trip) => {
       text: it.text || '',
       time: it.time || '',
       day: it.dayIndex + 1,
+      dayZeroBased: it.dayIndex,
       coords: KNOWN_PLACES[it.place] || null,
+      color: DAY_COLORS[it.dayIndex % DAY_COLORS.length],
       mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.place)}`,
     }))
   ));
   const mappedCount = items.filter((it) => KNOWN_PLACES[it.place]).length;
+
+  // Group markers by day for the filter chips
+  const dayGroups = {};
+  items.forEach((it) => {
+    if (!dayGroups[it.dayIndex]) dayGroups[it.dayIndex] = { day: it.dayIndex, count: 0 };
+    dayGroups[it.dayIndex].count++;
+  });
+  const sortedDays = Object.values(dayGroups).sort((a, b) => a.day - b.day);
+  const filterChips = sortedDays.map((d) => `
+    <button type="button" class="day-chip active" data-day="${d.day}">
+      <span class="day-dot" style="background:${DAY_COLORS[d.day % DAY_COLORS.length]}"></span>
+      Day ${d.day + 1}
+      <span class="day-count">${d.count}</span>
+    </button>
+  `).join('');
+
   return `<section class="section">
     <div class="card map-card">
       <h3>地圖總覽 <span class="muted" style="font-weight:400;font-size:13px">${items.length} 個地點 · ${mappedCount} 個有座標</span></h3>
       <div id="trip-map" class="trip-map" data-markers="${markersJson}"></div>
       <p class="muted" style="font-size:12px;margin:8px 0 0">
-        🗺 由 OpenStreetMap 提供 tiles · 點 marker 看詳情 · 沒座標的地點列在下方清單
+        🗺 由 OpenStreetMap 提供 tiles · marker 顏色標日期 · 點 marker 看詳情 · 沒座標的地點列在下方清單
       </p>
+    </div>
+    <div class="card day-filter-card">
+      <div class="day-filter-header">
+        <h3>日期篩選</h3>
+        <button type="button" class="btn btn-ghost day-filter-all" data-day-filter="all">全顯 / 全隱</button>
+      </div>
+      <div class="day-filter-chips">
+        ${filterChips}
+      </div>
     </div>
     <div class="card">
       <h3>所有地點（${items.length}）</h3>

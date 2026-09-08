@@ -514,4 +514,61 @@ dialog::backdrop { background: rgba(0,0,0,.4); backdrop-filter: blur(2px); }
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   opacity: 0.75;
 }
+
+/* Map day markers */
+.trip-marker-wrap { background: transparent !important; border: none !important; }
+.trip-marker {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,.35);
+  border: 2px solid #fff;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* Day filter chips */
+.day-filter-card { padding: 14px 16px; }
+.day-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.day-filter-header h3 { margin: 0; font-size: 14px; }
+.day-filter-all { font-size: 12px; padding: 4px 10px; border-radius: 999px; }
+.day-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.day-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity .15s, background .15s;
+}
+.day-chip:not(.active) { opacity: 0.4; }
+.day-chip .day-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,.08);
+}
+.day-chip .day-count {
+  color: var(--text-3);
+  font-size: 12px;
+}
 .app-version:hover { opacity: 1; }
