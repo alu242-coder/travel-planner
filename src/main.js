@@ -130,9 +130,31 @@ const initTripMap = () => {
     maxZoom: 19,
   }).addTo(map);
   if (mapped.length === 0) return;
+
+  // Store marker layers per day index for filtering
+  const markerLayers = {};
   const bounds = [];
+
   mapped.forEach((m) => {
-    const marker = L.marker(m.coords).addTo(map);
+    const color = m.color || '#0891b2';
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="
+        background:${color};
+        color:#fff;
+        width:28px;height:28px;
+        border-radius:50% 50% 50% 0;
+        transform:rotate(-45deg);
+        display:flex;align-items:center;justify-content:center;
+        font-size:11px;font-weight:700;font-family:system-ui,sans-serif;
+        box-shadow:0 2px 6px rgba(0,0,0,.35);
+        border:2px solid #fff;
+      ">${m.day}</div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 28],
+      popupAnchor: [0, -30],
+    });
+    const marker = L.marker(m.coords, { icon }).addTo(map);
     const popup = `
       <div style="font-family:system-ui,sans-serif;font-size:13px;line-height:1.5">
         <strong>#${m.idx} ${escape(m.text || m.place)}</strong><br/>
@@ -141,9 +163,51 @@ const initTripMap = () => {
       </div>`;
     marker.bindPopup(popup);
     bounds.push(m.coords);
+    if (!markerLayers[m.dayZeroBased]) markerLayers[m.dayZeroBased] = [];
+    markerLayers[m.dayZeroBased].push(marker);
   });
+
   if (bounds.length >= 2) map.fitBounds(bounds, { padding: [40, 40] });
   else if (bounds.length === 1) map.setView(bounds[0], 14);
+
+  // Day chip filter logic
+  const chipsContainer = document.querySelector('.day-filter-card') || container.parentElement;
+  const chips = chipsContainer.querySelectorAll('.day-chip');
+  const allBtn = chipsContainer.querySelector('.day-filter-all');
+
+  const setDayVisibility = (dayZeroBased, show) => {
+    if (markerLayers[dayZeroBased]) {
+      markerLayers[dayZeroBased].forEach((mk) => {
+        if (show) mk.addTo(map);
+        else map.removeLayer(mk);
+      });
+    }
+  };
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const day = parseInt(chip.dataset.day, 10);
+      const isActive = chip.classList.contains('active');
+      chip.classList.toggle('active');
+      setDayVisibility(day, !isActive);
+    });
+  });
+
+  if (allBtn) {
+    allBtn.addEventListener('click', () => {
+      const allActive = [...chips].every((c) => c.classList.contains('active'));
+      chips.forEach((chip) => {
+        const day = parseInt(chip.dataset.day, 10);
+        if (allActive) {
+          chip.classList.remove('active');
+          setDayVisibility(day, false);
+        } else {
+          chip.classList.add('active');
+          setDayVisibility(day, true);
+        }
+      });
+    });
+  }
 };
 
 const render = () => {
